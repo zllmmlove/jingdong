@@ -1,4 +1,11 @@
 <template>
+  <div class="wrapper">
+    <div class="position">
+      <span class="iconfont position__icon">&#xe608;</span>
+      秦皇岛职业技术学院5号楼511
+      <span class="iconfont position__notice">&#xe60d;</span>
+    </div>
+  </div>
   <div class="dockor">
     <div class="dockor__item dockor__item--active">
       <div class="iconfont">&#xe69b;</div>
@@ -20,6 +27,35 @@
 </template>
 
 <style lang="scss">
+@import "./style/viriables.scss";
+@import "./style/mixins.scss";
+.wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0.5rem;
+  padding: 0 0.18rem;
+}
+.position {
+  position: relative;
+  padding: 0.16rem 0.24rem 0.16rem 0;
+  line-height: 0.22rem;
+  font-size: 0.16rem;
+  @include ellipsis;
+  .position__icon {
+    position: relative;
+    top: 0.02rem;
+    font-size: 0.2rem;
+  }
+  .position__notice {
+    position: absolute;
+    top: 0.17rem;
+    right: 0;
+    font-size: 0.2rem;
+  }
+  color: $content-fontcolor;
+}
 .dockor {
   display: flex;
   position: absolute;
@@ -29,7 +65,8 @@
   bottom: 0;
   width: 100%;
   height: 0.49rem;
-  border-top: 1px solid #f1f1f1;
+  border-top: 0.01rem solid #f1f1f1;
+  color: $content-fontcolor;
   &__item {
     flex: 1;
     text-align: center;
@@ -42,7 +79,7 @@
     }
   }
   &__title {
-    font-size: 20px;
+    font-size: 0.2rem;
     transform: scale(0.5, 0.5);
     transform-origin: center top;
   }

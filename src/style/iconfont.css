@@ -1,16 +1,16 @@
 @font-face {
   font-family: "iconfont"; /* Project id 3612516 */
-  src: url("//at.alicdn.com/t/c/font_3612516_pkv1j1ajec.woff2?t=1662981658243")
+  src: url("//at.alicdn.com/t/c/font_3612516_uws7hdokla.woff2?t=1662984230367")
       format("woff2"),
-    url("//at.alicdn.com/t/c/font_3612516_pkv1j1ajec.woff?t=1662981658243")
+    url("//at.alicdn.com/t/c/font_3612516_uws7hdokla.woff?t=1662984230367")
       format("woff"),
-    url("//at.alicdn.com/t/c/font_3612516_pkv1j1ajec.ttf?t=1662981658243")
+    url("//at.alicdn.com/t/c/font_3612516_uws7hdokla.ttf?t=1662984230367")
       format("truetype");
 }
 
 .iconfont {
   font-family: "iconfont" !important;
-  font-size: 16px;
+  font-size: 0.16rem;
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
