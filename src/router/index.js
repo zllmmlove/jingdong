@@ -1,12 +1,21 @@
 import { createRouter, createWebHashHistory } from "vue-router";
 import HomeView from "../views/home/Home";
 import LoginView from "../views/login/Login";
-
+import RegisterView from "../views/register/Register";
 const routes = [
   {
     path: "/",
     name: "Home",
     component: HomeView
+  },
+  {
+    path: "/register",
+    name: "Register",
+    component: RegisterView,
+    beforeEnter(to, from, next) {
+      const { isLogin } = localStorage;
+      isLogin ? next({ name: "Home" }) : next();
+    }
   },
   {
     path: "/login",
@@ -33,7 +42,9 @@ const router = createRouter({
 });
 router.beforeEach((to, from, next) => {
   const { isLogin } = localStorage;
-  isLogin || to.name === "Login" ? next() : next({ name: "Login" });
+  const { name } = to;
+  const isLoginOrRegister = name === "Login" || name === "Register";
+  isLogin || isLoginOrRegister ? next() : next({ name: "Login" });
 });
 
 export default router;
