@@ -3,9 +3,25 @@
 </template>
 
 <script>
+import { reactive } from "vue";
 export default {
   name: "ToastVue",
   props: ["msg"]
+};
+export const useToastEffect = () => {
+  const toastData = reactive({
+    showToast: false,
+    toastMessage: ""
+  });
+  const showToast = (msg) => {
+    toastData.showToast = true;
+    toastData.toastMessage = msg;
+    setTimeout(() => {
+      toastData.showToast = false;
+      toastData.toastMessage = "";
+    }, 2000);
+  };
+  return { toastData, showToast };
 };
 </script>
 
