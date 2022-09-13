@@ -1,27 +1,40 @@
 <template>
   <div class="dockor">
-    <div class="dockor__item dockor__item--active">
-      <div class="iconfont">&#xe69b;</div>
-      <div class="dockor__title">首页</div>
-    </div>
-    <div class="dockor__item">
-      <div class="iconfont">&#xe6e6;</div>
-      <div class="dockor__title">购物车</div>
-    </div>
-    <div class="dockor__item">
-      <div class="iconfont">&#xe671;</div>
-      <div class="dockor__title">订单</div>
-    </div>
-    <div class="dockor__item">
-      <div class="iconfont">&#xe62f;</div>
-      <div class="dockor__title">我的</div>
+    <div
+      v-for="(item, index) in dockorList"
+      :class="{ dockor__item: true, 'dockor__item--active': index === 0 }"
+      :key="item.icon"
+    >
+      <div class="iconfont" v-html="item.icon"></div>
+      <div class="dockor__title">{{ item.text }}</div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: "dockorVue"
+  name: "dockorVue",
+  setup() {
+    const dockorList = [
+      {
+        icon: "&#xe69b;",
+        text: "首页"
+      },
+      {
+        icon: "&#xe6e6;",
+        text: "购物车"
+      },
+      {
+        icon: "&#xe671;",
+        text: "订单"
+      },
+      {
+        icon: "&#xe62f;",
+        text: "我的"
+      }
+    ];
+    return { dockorList };
+  }
 };
 </script>
 
