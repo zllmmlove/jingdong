@@ -9,7 +9,8 @@
       <input
         class="wrapper__input__content"
         type="text"
-        placeholder="请输入手机号"
+        placeholder="请输入用户名"
+        v-model="username"
       />
     </div>
     <div class="wrapper__input">
@@ -17,6 +18,8 @@
         class="wrapper__input__content"
         type="password"
         placeholder="请输入密码"
+        autocomplete="new-password"
+        v-model="password"
       />
     </div>
     <div class="wrapper__input">
@@ -24,25 +27,77 @@
         class="wrapper__input__content"
         type="password"
         placeholder="确认密码"
+        v-model="ensurement"
       />
     </div>
-    <div class="wrapper__register-button">注册</div>
+    <div class="wrapper__register-button" @click="handleRegister">注册</div>
     <div class="wrapper__register-link" @click="handleLogin">
       已有帐号去登陆
     </div>
+    <ToastVue v-if="show" :msg="toastMessage" />
   </div>
 </template>
 
 <script>
 import { useRouter } from "vue-router";
+import { reactive, toRefs } from "@vue/reactivity";
+import { post } from "@/utils/request";
+import ToastVue, { useToastEffect } from "@/components/Toast.vue";
+
+//注册职责
+const useRegisterEffect = (showToast) => {
+  const router = useRouter();
+  const data = reactive({
+    username: "",
+    password: "",
+    ensurement: ""
+  });
+  const handleRegister = async () => {
+    try {
+      const result = await post("/api/user/register", {
+        username: data.username,
+        password: data.password
+      });
+      if (result?.errno === 0) {
+        router.push({ name: "Login" });
+      } else {
+        showToast("注册失败");
+      }
+    } catch (e) {
+      showToast("请求失败");
+    }
+  };
+  const { username, password, ensurement } = toRefs(data);
+  return { username, password, ensurement, handleRegister };
+};
+//跳转到登录界面
+const useLoginEffect = () => {
+  const router = useRouter();
+  const handleLogin = () => {
+    router.push({ name: "Login" });
+  };
+  return { handleLogin };
+};
+
 export default {
   name: "RegisterView",
+  components: {
+    ToastVue
+  },
   setup() {
-    const router = useRouter();
-    const handleLogin = () => {
-      router.push({ name: "Login" });
+    const { show, toastMessage, showToast } = useToastEffect();
+    const { username, password, ensurement, handleRegister } =
+      useRegisterEffect(showToast);
+    const { handleLogin } = useLoginEffect();
+    return {
+      username,
+      password,
+      ensurement,
+      show,
+      toastMessage,
+      handleRegister,
+      handleLogin
     };
-    return { handleLogin };
   }
 };
 </script>
