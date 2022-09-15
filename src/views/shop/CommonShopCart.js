@@ -5,7 +5,7 @@ export const useCommonCartEffect = () => {
   const cartList = store.state.cartList;
   const changeCartItemInfo = (shopId, productId, productInfo, num) => {
     // console.log(productId);
-    store.commit("addItemToCart", { shopId, productId, productInfo, num });
+    store.commit("changeCartItemInfo", { shopId, productId, productInfo, num });
   };
   return { changeCartItemInfo, cartList };
 };
