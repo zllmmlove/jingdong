@@ -30,7 +30,7 @@
             @click="() => changeCartItem(shopId, item._id, item, -1, shopName)"
             >-</span
           >
-          {{ cartList?.[shopId]?.productList?.[item._id]?.count || 0 }}
+          {{ getProductCartCount(shopId, item._id) }}
           <span
             class="product__number__plus"
             @click="() => changeCartItem(shopId, item._id, item, 1, shopName)"
@@ -82,28 +82,40 @@ const useCurrentListEffect = (currentTab, shopId) => {
   const { contentList } = toRefs(data);
   return { contentList };
 };
+//购物车相关逻辑
+const useCartEffect = () => {
+  const store = useStore();
+  const { changeCartItemInfo, cartList } = useCommonCartEffect();
+
+  const changeShopName = (shopId, shopName) => {
+    store.commit("changeShopName", {
+      shopId,
+      shopName
+    });
+  };
+
+  const changeCartItem = (shopId, productId, item, number, shopName) => {
+    changeCartItemInfo(shopId, productId, item, number);
+    changeShopName(shopId, shopName);
+  };
+
+  const getProductCartCount = (shopId, productId) => {
+    return cartList?.[shopId]?.productList?.[productId]?.count || 0;
+  };
+  return { cartList, changeCartItem, getProductCartCount };
+};
 
 export default {
   name: "ShopContent",
   props: ["shopName"],
   setup() {
     const route = useRoute();
-    const store = useStore();
+
     const shopId = route.params.id;
     const { currentTab, handleTabClick } = useTabEffect();
     const { contentList } = useCurrentListEffect(currentTab, shopId);
-    const { changeCartItemInfo, cartList } = useCommonCartEffect();
-    const changeShopName = (shopId, shopName) => {
-      store.commit("changeShopName", {
-        shopId,
-        shopName
-      });
-    };
+    const { cartList, changeCartItem, getProductCartCount } = useCartEffect();
 
-    const changeCartItem = (shopId, productId, item, number, shopName) => {
-      changeCartItemInfo(shopId, productId, item, number);
-      changeShopName(shopId, shopName);
-    };
     return {
       handleTabClick,
       contentList,
@@ -111,7 +123,8 @@ export default {
       currentTab,
       cartList,
       shopId,
-      changeCartItem
+      changeCartItem,
+      getProductCartCount
     };
   }
 };

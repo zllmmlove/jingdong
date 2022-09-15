@@ -5,8 +5,10 @@
       :class="{ dockor__item: true, 'dockor__item--active': index === 0 }"
       :key="item.icon"
     >
-      <div class="iconfont" v-html="item.icon"></div>
-      <div class="dockor__title">{{ item.text }}</div>
+      <router-link :to="item.to">
+        <div class="iconfont" v-html="item.icon"></div>
+        <div class="dockor__title">{{ item.text }}</div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -18,19 +20,23 @@ export default {
     const dockorList = [
       {
         icon: "&#xe69b;",
-        text: "首页"
+        text: "首页",
+        to: { name: "Home" }
       },
       {
         icon: "&#xe6e6;",
-        text: "购物车"
+        text: "购物车",
+        to: { name: "CartList" }
       },
       {
         icon: "&#xe671;",
-        text: "订单"
+        text: "订单",
+        to: { name: "Home" }
       },
       {
         icon: "&#xe62f;",
-        text: "我的"
+        text: "我的",
+        to: { name: "Home" }
       }
     ];
     return { dockorList };
@@ -59,8 +65,14 @@ export default {
       margin: 0.07rem 0 0.02rem 0;
       font-size: 0.18rem;
     }
+    a {
+      color: $content-fontcolor;
+      text-decoration: none;
+    }
     &--active {
-      color: #1fa4fc;
+      a {
+        color: #1fa4fc;
+      }
     }
   }
   &__title {
