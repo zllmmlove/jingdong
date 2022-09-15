@@ -34,6 +34,9 @@ export default createStore({
         product.count = 0;
       }
       product.count = product.count + num;
+      if (num > 0) {
+        product.checked = true;
+      }
       if (product.count < 0) {
         product.count = 0;
       }
@@ -41,6 +44,26 @@ export default createStore({
       state.cartList[shopId] = shopInfo;
       // console.log(state);
       // console.log(shopId, productId, productInfo);
+    },
+    changeCartItemChecked(state, payload) {
+      const { shopId, productId } = payload;
+      const productItem = state.cartList[shopId][productId];
+      productItem.checked = !productItem.checked;
+    },
+    cleanCartProducts(state, payload) {
+      const { shopId } = payload;
+      state.cartList[shopId] = {};
+    },
+    setCartItemsChecked(state, payload) {
+      const shopId = payload.shopId;
+      const products = state.cartList[shopId];
+
+      if (products) {
+        for (let key in products) {
+          let product = products[key];
+          product.checked = true;
+        }
+      }
     }
   },
   actions: {},
