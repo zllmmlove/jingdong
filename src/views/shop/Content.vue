@@ -26,8 +26,12 @@
         </div>
         <div class="product__number">
           <span class="product__number__minus">-</span>
-          0
-          <span class="product__number__plus">+</span>
+          {{ cartList?.[shopId]?.[item._id]?.count || 0 }}
+          <span
+            class="product__number__plus"
+            @click="() => addItemToCart(shopId, item._id, item)"
+            >+</span
+          >
         </div>
       </div>
     </div>
@@ -38,6 +42,7 @@
 import { reactive, toRefs, ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 import { get } from "@/utils/request";
+import { useStore } from "vuex";
 
 const categories = [
   { name: "全部商品", tab: "all" },
@@ -55,10 +60,8 @@ const useTabEffect = () => {
 };
 
 //列表内容相关的逻辑
-const useCurrentListEffect = (currentTab) => {
-  const route = useRoute();
+const useCurrentListEffect = (currentTab, shopId) => {
   const data = reactive({ contentList: [] });
-  const shopId = route.params.id;
   const getContentData = async () => {
     const result = await get(`/api/shop/${shopId}/products`, {
       tab: currentTab.value
@@ -75,12 +78,34 @@ const useCurrentListEffect = (currentTab) => {
   return { contentList };
 };
 
+const useCartEffect = () => {
+  const store = useStore();
+  const { cartList } = toRefs(store.state);
+
+  const addItemToCart = (shopId, productId, productInfo) => {
+    // console.log(productId);
+
+    store.commit("addItemToCart", { shopId, productId, productInfo });
+  };
+  return { cartList, addItemToCart };
+};
 export default {
   name: "ShopContent",
   setup() {
+    const route = useRoute();
+    const shopId = route.params.id;
     const { currentTab, handleTabClick } = useTabEffect();
-    const { contentList } = useCurrentListEffect(currentTab);
-    return { handleTabClick, contentList, categories, currentTab };
+    const { contentList } = useCurrentListEffect(currentTab, shopId);
+    const { cartList, addItemToCart } = useCartEffect();
+    return {
+      handleTabClick,
+      contentList,
+      categories,
+      currentTab,
+      cartList,
+      shopId,
+      addItemToCart
+    };
   }
 };
 </script>
