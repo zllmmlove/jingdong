@@ -1,5 +1,31 @@
 <template>
   <div class="cart">
+    <div class="product">
+      <div class="product__item" v-for="item in productList" :key="item._id">
+        <img class="product__item__img" :src="item.imgUrl" alt="" />
+        <div class="product__item__detail">
+          <h4 class="product__item__title">{{ item.name }}</h4>
+
+          <p class="product__item__price">
+            <span class="product__item__yen">&yen;</span>{{ item.price }}
+            <span class="product__item__origin">&yen;{{ item.oldPrice }}</span>
+          </p>
+        </div>
+        <div class="product__number">
+          <span
+            class="product__number__minus"
+            @click="() => changeCartItemInfo(shopId, item._id, item, -1)"
+            >-</span
+          >
+          {{ item.count || 0 }}
+          <span
+            class="product__number__plus"
+            @click="() => changeCartItemInfo(shopId, item._id, item, 1)"
+            >+</span
+          >
+        </div>
+      </div>
+    </div>
     <div class="check">
       <div class="check__icon">
         <img
@@ -7,10 +33,10 @@
           alt=""
           class="check__icon__img"
         />
-        <div class="check__icon__tag">1</div>
+        <div class="check__icon__tag">{{ total }}</div>
       </div>
       <div class="check__info">
-        总计：<span class="check__info__price">&yen;127</span>
+        总计：<span class="check__info__price">&yen; {{ price }}</span>
       </div>
       <div class="check__btn">去结算</div>
     </div>
@@ -18,17 +44,132 @@
 </template>
 
 <script>
+import { computed } from "vue";
+import { useStore } from "vuex";
+import { useRoute } from "vue-router";
+
+//获取购物车信息逻辑
+const useCartEffect = (shopId) => {
+  const store = useStore();
+  const cartList = store.state.cartList;
+  const total = computed(() => {
+    const productList = cartList[shopId];
+    let count = 0;
+    if (productList) {
+      for (let i in productList) {
+        const product = productList[i];
+        count += product.count;
+      }
+    }
+    return count;
+  });
+  const price = computed(() => {
+    const productList = cartList[shopId];
+    let count = 0;
+    if (productList) {
+      for (let i in productList) {
+        const product = productList[i];
+        count += product.count * product.price;
+      }
+    }
+    return count.toFixed(2);
+  });
+  const productList = computed(() => {
+    const productList = cartList[shopId] || [];
+    return productList;
+  });
+  return { total, price, productList };
+};
+
 export default {
-  name: "ShopCart"
+  name: "ShopCart",
+  setup() {
+    const route = useRoute();
+    const shopId = route.params.id;
+
+    const { total, price, productList } = useCartEffect(shopId);
+    return { total, price, productList };
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+@import "../../style/mixins.scss";
 .cart {
   position: fixed;
   bottom: 0;
   left: 0;
   right: 0;
+}
+.product {
+  overflow-y: scroll;
+  flex: 1;
+  background: #fff;
+  &__item {
+    position: relative;
+    padding: 0.12rem 0;
+    margin: 0 0.16rem;
+    border-bottom: 0.01rem solid #f1f1f1;
+    display: flex;
+    &__img {
+      width: 0.46rem;
+      height: 0.46rem;
+      margin-right: 0.16rem;
+    }
+    &__detail {
+      overflow: hidden;
+    }
+    &__title {
+      margin: 0;
+      line-height: 0.2rem;
+      font-size: 0.14rem;
+      color: #333;
+      @include ellipsis;
+    }
+
+    &__price {
+      margin: 0.06rem 0 0 0;
+      line-height: 0.2rem;
+      font-size: 0.14rem;
+      color: #ed3b3b;
+    }
+    &__yen {
+      font-size: 0.12rem;
+    }
+    &__origin {
+      margin-left: 0.06rem;
+      line-height: 0.2rem;
+      font-size: 0.12rem;
+      color: #999;
+      text-decoration: line-through;
+    }
+    .product__number {
+      position: absolute;
+      right: 0;
+      bottom: 0.12rem;
+      &__minus,
+      &__plus {
+        display: inline-block;
+        width: 0.2rem;
+        height: 0.2rem;
+        line-height: 0.16rem;
+        border-radius: 50%;
+        border: 0.01rem solid #666;
+        font-size: 0.2rem;
+        text-align: center;
+      }
+      &__minus {
+        border: 0.01rem solid #666;
+        color: #666;
+        margin-right: 0.05rem;
+      }
+      &__plus {
+        background: #0091ff;
+        color: #fff;
+        margin-left: 0.05rem;
+      }
+    }
+  }
 }
 .check {
   display: flex;
@@ -47,17 +188,19 @@ export default {
     }
     &__tag {
       position: absolute;
-      right: 0.2rem;
+      left: 0.46rem;
       top: 0.04rem;
-      width: 0.2rem;
+      padding: 0 0.04rem;
+      min-width: 0.2rem;
       height: 0.2rem;
       line-height: 0.2rem;
       background: #e93b3b;
-      border-radius: 50%;
+      border-radius: 0.1rem;
       font-size: 0.12rem;
       text-align: center;
       color: #fff;
-      transform: scale(0.5, 0.5);
+      transform: scale(0.5);
+      transform-origin: left center;
     }
   }
   &__info {

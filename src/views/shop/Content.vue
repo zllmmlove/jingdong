@@ -25,11 +25,15 @@
           </p>
         </div>
         <div class="product__number">
-          <span class="product__number__minus">-</span>
+          <span
+            class="product__number__minus"
+            @click="() => changeCartItemInfo(shopId, item._id, item, -1)"
+            >-</span
+          >
           {{ cartList?.[shopId]?.[item._id]?.count || 0 }}
           <span
             class="product__number__plus"
-            @click="() => addItemToCart(shopId, item._id, item)"
+            @click="() => changeCartItemInfo(shopId, item._id, item, 1)"
             >+</span
           >
         </div>
@@ -78,16 +82,16 @@ const useCurrentListEffect = (currentTab, shopId) => {
   return { contentList };
 };
 
+//购物车相关逻辑
 const useCartEffect = () => {
   const store = useStore();
   const { cartList } = toRefs(store.state);
 
-  const addItemToCart = (shopId, productId, productInfo) => {
+  const changeCartItemInfo = (shopId, productId, productInfo, num) => {
     // console.log(productId);
-
-    store.commit("addItemToCart", { shopId, productId, productInfo });
+    store.commit("addItemToCart", { shopId, productId, productInfo, num });
   };
-  return { cartList, addItemToCart };
+  return { cartList, changeCartItemInfo };
 };
 export default {
   name: "ShopContent",
@@ -96,7 +100,7 @@ export default {
     const shopId = route.params.id;
     const { currentTab, handleTabClick } = useTabEffect();
     const { contentList } = useCurrentListEffect(currentTab, shopId);
-    const { cartList, addItemToCart } = useCartEffect();
+    const { cartList, changeCartItemInfo } = useCartEffect();
     return {
       handleTabClick,
       contentList,
@@ -104,7 +108,7 @@ export default {
       currentTab,
       cartList,
       shopId,
-      addItemToCart
+      changeCartItemInfo
     };
   }
 };
