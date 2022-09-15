@@ -1,5 +1,5 @@
 <template>
-  <div class="mask" v-if="showCart"></div>
+  <div class="mask" v-if="showCart" @click="handleCartShowChange"></div>
   <div class="cart">
     <div class="product" v-if="showCart">
       <div class="product__header">
@@ -9,22 +9,23 @@
         >
           <span
             class="product__header__icon iconfont"
-            v-html="allChecked ? '&#xe656;' : '&#xe77d;'"
+            v-html="allChecked ? '&#xe656;' : '&#xe933;'"
           ></span>
           全选
         </div>
-        <div
-          class="product__header__clear"
-          @click="() => cleanCartProducts(shopId)"
-        >
-          清空购物车
+        <div class="product__header__clear">
+          <span
+            class="product__header__clear__btn"
+            @click="() => cleanCartProducts(shopId)"
+            >清空购物车</span
+          >
         </div>
       </div>
       <template v-for="item in productList" :key="item._id">
         <div class="product__item" v-if="item.count > 0">
           <div
             class="product__item__checked iconfont"
-            v-html="item.checked ? '&#xe656;' : '&#xe77d;'"
+            v-html="item.checked ? '&#xe656;' : '&#xe933;'"
             @click="() => changeCartItemChecked(shopId, item._id)"
           ></div>
           <img class="product__item__img" :src="item.imgUrl" alt="" />
@@ -67,7 +68,9 @@
       <div class="check__info">
         总计：<span class="check__info__price">&yen; {{ price }}</span>
       </div>
-      <div class="check__btn">去结算</div>
+      <div class="check__btn">
+        <router-link to="{ name: 'orderCreation' }"> 去结算 </router-link>
+      </div>
     </div>
   </div>
 </template>
@@ -152,15 +155,21 @@ const useCartEffect = (shopId) => {
   };
 };
 
+//展示隐藏购物车逻辑
+const toggleCartEffect = () => {
+  const showCart = ref(false);
+  const handleCartShowChange = () => {
+    showCart.value = !showCart.value;
+  };
+  return { showCart, handleCartShowChange };
+};
+
 export default {
   name: "ShopCart",
   setup() {
     const route = useRoute();
     const shopId = route.params.id;
-    const showCart = ref(false);
-    const handleCartShowChange = () => {
-      showCart.value = !showCart.value;
-    };
+    const { showCart, handleCartShowChange } = toggleCartEffect();
 
     const {
       total,
@@ -216,6 +225,7 @@ export default {
   &__header {
     display: flex;
     height: 0.52rem;
+    line-height: 0.52re;
     border-bottom: 0.01rem solid #f1f1f1;
     font-size: 0.14rem;
     color: #333;
@@ -225,6 +235,7 @@ export default {
     }
     &__icon {
       display: inline-block;
+      vertical-align: top;
       color: #0091ff;
       font-size: 0.2rem;
     }
@@ -232,6 +243,10 @@ export default {
       flex: 1;
       margin-right: 0.16rem;
       text-align: right;
+      &__btn {
+        display: inline-block;
+        height: 100%;
+      }
     }
   }
   &__item {
@@ -281,7 +296,7 @@ export default {
     .product__number {
       position: absolute;
       right: 0;
-      bottom: 0.12rem;
+      bottom: 0.26rem;
       &__minus,
       &__plus {
         display: inline-block;
@@ -350,9 +365,12 @@ export default {
   &__btn {
     width: 0.98rem;
     background-color: #4fb0f9;
-    color: #fff;
     font-size: 0.14rem;
     text-align: center;
+    a {
+      color: #fff;
+      text-decoration: none;
+    }
   }
 }
 </style>
