@@ -87,13 +87,13 @@
 import { computed, ref } from "vue";
 import { useStore } from "vuex";
 import { useRoute } from "vue-router";
-import { useCommonCartEffect } from "./CommonShopCart";
+import { useCommonCartEffect } from "../../effects/cartEffects";
 
 //获取购物车信息逻辑
 const useCartEffect = (shopId) => {
-  const { changeCartItemInfo } = useCommonCartEffect();
+  const { changeCartItemInfo, cartList, productList } =
+    useCommonCartEffect(shopId);
   const store = useStore();
-  const cartList = store.state.cartList;
 
   const calculations = computed(() => {
     const productList = cartList[shopId]?.productList;
@@ -113,11 +113,6 @@ const useCartEffect = (shopId) => {
       }
     }
     return { total, price: price.toFixed(2), allChecked };
-  });
-
-  const productList = computed(() => {
-    const productList = cartList[shopId]?.productList || [];
-    return productList;
   });
 
   const changeCartItemChecked = (shopId, productId) => {
