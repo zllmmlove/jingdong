@@ -2,7 +2,9 @@
   <div class="wrapper">
     <div class="top">
       <div class="top__header">
-        <div class="top__header__back iconfont">&#xe697;</div>
+        <div class="top__header__back iconfont" @click="handleBackClick">
+          &#xe697;
+        </div>
         确认订单
       </div>
       <div class="top__receiver">
@@ -17,39 +19,51 @@
     <div class="products">
       <div class="products__title">{{ shopName }}</div>
       <div class="products__list">
-        <div class="products__item" v-for="item in productList" :key="item._id">
-          <img class="products__item__img" :src="item.imgUrl" alt="" />
-          <div class="products__item__detail">
-            <h4 class="products__item__title">{{ item.name }}</h4>
-            <p class="products__item__price">
-              <span class="products__item__single">
-                <span class="products__item__yen"
-                  >&yen;{{ item.price }}x{{ item.count }}</span
-                >
-              </span>
-              <span class="products__item__total">
-                <span class="products__item__yen"
-                  >&yen;{{ item.price * item.count }}</span
-                >
-              </span>
-            </p>
+        <templete v-for="item in productList" :key="item._id">
+          <div class="products__item" v-if="item.count > 0">
+            <img class="products__item__img" :src="item.imgUrl" alt="" />
+            <div class="products__item__detail">
+              <h4 class="products__item__title">{{ item.name }}</h4>
+              <p class="products__item__price">
+                <span class="products__item__single">
+                  <span class="products__item__yen"
+                    >&yen;{{ item.price }}x{{ item.count }}</span
+                  >
+                </span>
+                <span class="products__item__total">
+                  <span class="products__item__yen"
+                    >&yen;{{ (item.price * item.count).toFixed(2) }}</span
+                  >
+                </span>
+              </p>
+            </div>
           </div>
-        </div>
+        </templete>
       </div>
+    </div>
+    <div class="order">
+      <div class="order__price">
+        实付金额 <b>￥{{ calculations.price }}</b>
+      </div>
+      <div class="order__btn">提交订单</div>
     </div>
   </div>
 </template>
 
 <script>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useCommonCartEffect } from "../../effects/cartEffects";
 export default {
   name: "OrderConfirmation",
   setup() {
+    const Router = useRouter();
     const route = useRoute();
     const shopId = route.params.id;
-    const { productList, shopName } = useCommonCartEffect(shopId);
-    return { productList, shopName };
+    const { productList, shopName, calculations } = useCommonCartEffect(shopId);
+    const handleBackClick = () => {
+      Router.back();
+    };
+    return { productList, shopName, calculations, handleBackClick };
   }
 };
 </script>
@@ -63,6 +77,7 @@ export default {
   top: 0;
   bottom: 0;
   background-color: #eee;
+  overflow-y: scroll;
 }
 .top {
   position: relative;
@@ -122,7 +137,7 @@ export default {
   }
 }
 .products {
-  margin: 0.16rem 0.18rem 0.55rem 0.18rem;
+  margin: 0.16rem 0.18rem 0.2rem 0.18rem;
   background: #fff;
   &__title {
     padding: 0.16rem 0.16rem 0 0.16rem;
@@ -164,6 +179,29 @@ export default {
     &__yen {
       font-size: 0.12rem;
     }
+  }
+}
+.order {
+  display: flex;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 0.49rem;
+  line-height: 0.49rem;
+  background: #fff;
+  &__price {
+    flex: 1;
+    text-indent: 0.24rem;
+    font-size: 0.14rem;
+    color: #333;
+  }
+  &__btn {
+    width: 0.98rem;
+    background: #4fb0f9;
+    color: #fff;
+    text-align: center;
+    font-size: 0.14rem;
   }
 }
 </style>

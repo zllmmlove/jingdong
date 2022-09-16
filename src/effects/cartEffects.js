@@ -16,5 +16,25 @@ export const useCommonCartEffect = (shopId) => {
     const shopName = cartList[shopId]?.shopName || "";
     return shopName;
   });
-  return { changeCartItemInfo, cartList, productList, shopName };
+
+  const calculations = computed(() => {
+    const productList = cartList[shopId]?.productList;
+    let total = 0;
+    let price = 0;
+    let allChecked = true;
+    if (productList) {
+      for (let i in productList) {
+        const product = productList[i];
+        total += product.count;
+        if (product.checked) {
+          price += product.count * product.price;
+        }
+        if (product.count > 0 && !product.checked) {
+          allChecked = false;
+        }
+      }
+    }
+    return { total, price: price.toFixed(2), allChecked };
+  });
+  return { changeCartItemInfo, cartList, productList, shopName, calculations };
 };
