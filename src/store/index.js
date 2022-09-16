@@ -93,8 +93,12 @@ export default createStore({
         }
       }
       setLocalStorage(state);
+    },
+    clearCartData(state, { shopId }) {
+      state.cartList[shopId].productList = {};
     }
   },
+
   actions: {},
   modules: {}
 });
