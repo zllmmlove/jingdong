@@ -75,7 +75,9 @@
         >
       </div>
       <div class="check__btn">
-        <router-link to="{ name: 'orderCreation' }"> 去结算 </router-link>
+        <router-link :to="{ path: `/OrderConfirmation/${shopId}` }">
+          去结算
+        </router-link>
       </div>
     </div>
   </div>
