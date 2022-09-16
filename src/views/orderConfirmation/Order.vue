@@ -40,41 +40,56 @@ import { post } from "@/utils/request";
 import { useStore } from "vuex";
 import { ref } from "@vue/reactivity";
 
+//下单相关
+const useMakeOrderEffect = (productList, shopId, shopName) => {
+  const router = useRouter();
+  const store = useStore();
+  const handleConfirmOrder = async (isCancled) => {
+    const products = [];
+    for (let i in productList.value) {
+      const product = productList.value[i];
+      products.push({ id: parseInt(product._id, 10), num: product.count });
+    }
+    try {
+      const result = await post("/api/order", {
+        addressId: 1,
+        shopId,
+        shopName: shopName.value,
+        isCancled,
+        products
+      });
+      if (result?.errno === 0) {
+        store.commit("clearCartData", { shopId });
+        router.push({ name: "OrderList" });
+      }
+    } catch (e) {
+      alert("下单失败");
+    }
+  };
+  return { handleConfirmOrder };
+};
+
+//蒙层展示隐藏
+const useShowMaskEffect = () => {
+  const showConfirm = ref(false);
+  const handleSubmitClick = (status) => {
+    showConfirm.value = status;
+  };
+  return { showConfirm, handleSubmitClick };
+};
+
 export default {
   name: "OrderVue",
   setup() {
-    const router = useRouter();
     const route = useRoute();
-    const store = useStore();
-    const showConfirm = ref(false);
     const shopId = parseInt(route.params.id, 10);
     const { calculations, shopName, productList } = useCommonCartEffect(shopId);
-
-    const handleSubmitClick = (status) => {
-      showConfirm.value = status;
-    };
-    const handleConfirmOrder = async (isCancled) => {
-      const products = [];
-      for (let i in productList.value) {
-        const product = productList.value[i];
-        products.push({ id: parseInt(product._id, 10), num: product.count });
-      }
-      try {
-        const result = await post("/api/order", {
-          addressId: 1,
-          shopId,
-          shopName: shopName.value,
-          isCancled,
-          products
-        });
-        if (result?.errno === 0) {
-          store.commit("clearCartData", { shopId });
-          router.push({ name: "Home" });
-        }
-      } catch (e) {
-        alert("下单失败");
-      }
-    };
+    const { handleConfirmOrder } = useMakeOrderEffect(
+      productList,
+      shopId,
+      shopName
+    );
+    const { showConfirm, handleSubmitClick } = useShowMaskEffect();
     return { calculations, handleConfirmOrder, showConfirm, handleSubmitClick };
   }
 };

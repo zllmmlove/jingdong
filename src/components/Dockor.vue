@@ -2,7 +2,10 @@
   <div class="dockor">
     <div
       v-for="(item, index) in dockorList"
-      :class="{ dockor__item: true, 'dockor__item--active': index === 0 }"
+      :class="{
+        dockor__item: true,
+        'dockor__item--active': index === currentIndex
+      }"
       :key="item.icon"
     >
       <router-link :to="item.to">
@@ -16,6 +19,7 @@
 <script>
 export default {
   name: "dockorVue",
+  props: ["currentIndex"],
   setup() {
     const dockorList = [
       {
@@ -31,7 +35,7 @@ export default {
       {
         icon: "&#xe671;",
         text: "订单",
-        to: { name: "Home" }
+        to: { name: "OrderList" }
       },
       {
         icon: "&#xe62f;",
@@ -45,8 +49,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import "../../style/viriables.scss";
-@import "../../style/mixins.scss";
+@import "../style/viriables.scss";
 .dockor {
   display: flex;
   position: absolute;

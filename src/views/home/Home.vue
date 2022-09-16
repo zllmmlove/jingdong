@@ -3,12 +3,12 @@
     <StaticPart />
     <NearBy />
   </div>
-  <DockorVue />
+  <DockorVue :currentIndex="0" />
 </template>
 <script>
 import StaticPart from "./StaticPart.vue";
 import NearBy from "./NearBy.vue";
-import DockorVue from "./Dockor.vue";
+import DockorVue from "../../components/Dockor.vue";
 export default {
   name: "HomeVue",
   components: {
