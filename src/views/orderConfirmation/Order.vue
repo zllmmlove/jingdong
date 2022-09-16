@@ -3,10 +3,16 @@
     <div class="order__price">
       实付金额 <b>￥{{ calculations.price }}</b>
     </div>
-    <div class="order__btn">提交订单</div>
+    <div class="order__btn" @click="() => handleSubmitClick(true)">
+      提交订单
+    </div>
   </div>
-  <div class="mask">
-    <div class="mask__content">
+  <div
+    class="mask"
+    v-show="showConfirm"
+    @click="() => handleSubmitClick(false)"
+  >
+    <div class="mask__content" @click.stop>
       <h3 class="mask__content__title">确认要离开收银台吗？</h3>
       <p class="mask__content__desc">请尽快完成支付，否则将被取消</p>
       <div class="mask__content__btns">
@@ -32,6 +38,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useCommonCartEffect } from "../../effects/cartEffects";
 import { post } from "@/utils/request";
 import { useStore } from "vuex";
+import { ref } from "@vue/reactivity";
 
 export default {
   name: "OrderVue",
@@ -39,9 +46,13 @@ export default {
     const router = useRouter();
     const route = useRoute();
     const store = useStore();
+    const showConfirm = ref(false);
     const shopId = parseInt(route.params.id, 10);
     const { calculations, shopName, productList } = useCommonCartEffect(shopId);
 
+    const handleSubmitClick = (status) => {
+      showConfirm.value = status;
+    };
     const handleConfirmOrder = async (isCancled) => {
       const products = [];
       for (let i in productList.value) {
@@ -64,7 +75,7 @@ export default {
         alert("下单失败");
       }
     };
-    return { calculations, handleConfirmOrder };
+    return { calculations, handleConfirmOrder, showConfirm, handleSubmitClick };
   }
 };
 </script>
