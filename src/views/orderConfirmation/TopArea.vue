@@ -42,7 +42,7 @@ export default {
   background-repeat: no-repeat;
   &__header {
     position: relative;
-    padding-top: 0.26rem;
+    padding-top: 0.1rem;
     line-height: 0.24rem;
     color: #fff;
     text-align: center;

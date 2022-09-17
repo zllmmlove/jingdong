@@ -123,7 +123,8 @@ export default {
     border: 1px solid rgba(0, 0, 0, 0.1);
     border-radius: 0.06rem;
     &__content {
-      line-height: 0.48rem;
+      margin-top: 0.12rem;
+      line-height: 0.22rem;
       width: 100%;
       border: none;
       outline: none;
